@@ -52,14 +52,21 @@ io.on("connection",function (socket){
             const result = chess.move(move);
             if(result){
                 currentPlayer = chess.turn();
+                io.emit("move", move);
+                io.emit("boardState",chess.fen());
+
+            }
+            else{
+                console.log("Invalid Move : ", move);
+                socket.emit("invalidMove : ", move);
             }
         }
-        catch(err){}
+        catch(err){
+            console.log("invalidMove : ", move);
+            socket.emit("invaild Move : ", move);
+        }
     })
-
-
 });
-
 
 server.listen(3000,function(){
     console.log("listening");
