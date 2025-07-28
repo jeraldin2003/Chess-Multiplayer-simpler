@@ -25,7 +25,7 @@ const renderBoard = () => {
                 const pieceElement = document.createElement("div");
                 pieceElement.classList.add(
                     "piece", 
-                    square.color === 'w' ? "white" : "black"
+                    square.color === "w" ? "white" : "black"
                 );
                 pieceElement.innerText = getPieceUnicode(square);
                 pieceElement.draggable = playerRole === square.color;
@@ -33,7 +33,7 @@ const renderBoard = () => {
                 pieceElement.addEventListener("dragstart", (e) => {
                     if(pieceElement.draggable){
                         draggedPiece = pieceElement;
-                        sourceSquare = {row: rowindex, col: squareindex};
+                        sourceSquare = {row: rowindex, col: squareindex}; 
                         e.dataTransfer.setData("text/plain", "");
                     }
                 });
@@ -61,6 +61,12 @@ const renderBoard = () => {
         boardElement.appendChild(squareElement);
         });
     });   
+    if(playerRole === "b"){
+        boardElement.classList.add("flipped");
+    }
+    else{
+        boardElement.classList.remove("flipped");
+    }
 };
 
 const handleMove = (source, target) => {
@@ -68,7 +74,7 @@ const handleMove = (source, target) => {
         from:`${String.fromCharCode(97+source.col)}${8 - source.row}`,
         to:`${String.fromCharCode(97+target.col)}${8 - target.row}`,
         promotion: 'q'
-    };
+    }
     socket.emit("move", move);
 };
 
@@ -97,11 +103,11 @@ socket.on("spectatorRole", function(){
     playerRole = null;
     renderBoard();
 });
-socket.on("boardState",function(){
+socket.on("boardState",function(fen){
     chess.load(fen);
     renderBoard();
 });
-socket.on("move",function(){
+socket.on("move",function(move){
     chess.move(move);
     renderBoard();
 })
